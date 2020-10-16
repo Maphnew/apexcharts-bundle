@@ -44,10 +44,12 @@
     <script>
   var lastDate = 0;
   var data = []
-  var TICKINTERVAL = 86400000
-  let XAXISRANGE = 777600000
+  var TICKINTERVAL = 864
+  let XAXISRANGE = 777600
+
   function getDayWiseTimeSeries(baseval, count, yrange) {
     var i = 0;
+	  // 처음 그래프를 채울 데이터를 만들어 줌
     while (i < count) {
       var x = baseval;
       var y = Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min;
@@ -61,7 +63,7 @@
     }
   }
   
-  getDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 10, {
+  getDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 1000, {
     min: 10,
     max: 90
   })
@@ -70,7 +72,7 @@
     var newDate = baseval + TICKINTERVAL;
     lastDate = newDate
   
-    for(var i = 0; i< data.length - 10; i++) {
+    for(var i = 0; i< data.length - 1000; i++) {
       // IMPORTANT
       // we reset the x and y of the data which is out of drawing area
       // to prevent memory leaks
@@ -86,7 +88,7 @@
   
   function resetData(){
     // Alternatively, you can also reset the data at certain intervals to prevent creating a huge series 
-    data = data.slice(data.length - 10, data.length);
+    data = data.slice(data.length - 1000, data.length);
   }
   </script>
   </head>
@@ -120,7 +122,7 @@
                   enabled: true,
                   easing: 'linear',
                   dynamicAnimation: {
-                    speed: 1000
+                    speed: 100
                   }
                 },
                 toolbar: {
@@ -166,11 +168,18 @@
               min: 10,
               max: 90
             })
-            
+			// console.log(data.length)            
             ApexCharts.exec('realtime', 'updateSeries', [{
               data: data
             }])
-          }, 1000)
+			
+			console.log(data.length)   
+			// data가 너무 많아지면 data 크기를 줄이기 위해 사용 - 오랜시간 push 되었을 때
+			if(data.length > 1200){
+			  resetData()
+			}
+          }, 100)
+		  
         }
       
 
